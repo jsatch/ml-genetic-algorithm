@@ -9,12 +9,12 @@ def genetico(info_win, data_win):
     for i in range(0,MAX_ITERACIONES):
         for j in range(0, len(poblacion.poblacion)):
             e = poblacion.poblacion[j]
-            data_win.addstr(j+1, 0, "{} ---> {}".format(e, e.calcular_fitness()))
+            data_win.addstr(j+1, 1, "{} ---> {}".format(e, e.calcular_fitness()))
             data_win.refresh()
 
         info_win.clear()
-        info_win.addstr(0,0, "Numero de Generaciones:{}".format(i+1))
-        info_win.addstr(1,0, "Promedio Fitness:{}".format(poblacion.promedio_fitness()))
+        info_win.addstr(0,1, "Numero de Generaciones:{}".format(i+1))
+        info_win.addstr(1,1, "Promedio Fitness:{}".format(poblacion.promedio_fitness()))
         info_win.refresh()
 
         poblacion.seleccion()
@@ -23,11 +23,11 @@ def genetico(info_win, data_win):
     
     for j in range(0, len(poblacion.poblacion)):
         e = poblacion.poblacion[j]
-        data_win.addstr(j+1, 0, "{} ---> {}".format(e, e.calcular_fitness()))
+        data_win.addstr(j+1, 1, "{} ---> {}".format(e, e.calcular_fitness()))
         data_win.refresh()
     info_win.clear()
-    info_win.addstr(0,0, "Numero de Generaciones:{}".format(i+1))
-    info_win.addstr(1,0, "Promedio Fitness:{}".format(poblacion.promedio_fitness()))
+    info_win.addstr(0,1, "Numero de Generaciones:{}".format(i+1))
+    info_win.addstr(1,1, "Promedio Fitness:{}".format(poblacion.promedio_fitness()))
     info_win.refresh()
 
 
@@ -39,6 +39,8 @@ def main(stdscr):
 
     data_win = curses.newwin(curses.LINES,int(curses.COLS/2),0,int(curses.COLS/2))
 
+    data_win.border(0)
+    info_win.refresh()
     genetico(info_win, data_win)
     #data_win.getkey()
     info_win.getkey()
