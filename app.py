@@ -4,7 +4,7 @@ import ag
 def genetico(info_win, data_win):
     POBLACION = 10
     MAX_ITERACIONES = 10000
-    poblacion = ag.Poblacion(POBLACION, ag.generador, ag.fitness)
+    poblacion = ag.Poblacion(POBLACION, ag.generador, ag.fitness, ag.f_reproduccion)
     data_win.addstr(0,0,"GENERACIONES:")
     for i in range(0,MAX_ITERACIONES):
         for j in range(0, len(poblacion.poblacion)):

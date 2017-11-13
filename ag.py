@@ -1,7 +1,7 @@
 import random
 import string
 
-CADENA_A_BUSCAR = 'LEOPOLDO'
+CADENA_A_BUSCAR = 'CAMILO'
 PORCENTAJE_MUTACION = 0.01
 
 class ADN:
@@ -22,7 +22,7 @@ class ADN:
         #funcion reproduccion
         k = random.randint(0, len(pareja.genes))
         parte_izq = self.genes[0:k]
-        parte_der = self.genes[k:]
+        parte_der = pareja.genes[k:]
         return parte_izq + parte_der
 
     def mutar(self):
@@ -36,7 +36,7 @@ class ADN:
         return " ".join(self.genes)
 
 class Poblacion:
-    def __init__(self, cantidad, generador, fitness):
+    def __init__(self, cantidad, generador, fitness, f_reproductora):
         self.cantidad = cantidad
         self.poblacion = []
         self.generador = generador
@@ -44,6 +44,7 @@ class Poblacion:
         self.fitness_results = []
         self.fitness_total = 0
         self.lista_reproduccion = []
+        self.f_reproductora = f_reproductora
 
         for i in range(1,cantidad):
             especie = ADN(self.generador,self.fitness)
@@ -69,7 +70,7 @@ class Poblacion:
             pareja_a = self.lista_reproduccion[random.randint(0, len(self.lista_reproduccion)-1)]
             pareja_b = self.lista_reproduccion[random.randint(0, len(self.lista_reproduccion)-1)]
 
-            hijo = pareja_a.reproducir(pareja_b)
+            hijo = self.f_reproductora(pareja_a, pareja_b)
             especie = ADN(self.generador,self.fitness)
             especie.genes = hijo
             self.poblacion.append(especie)
@@ -105,10 +106,16 @@ def fitness(cadena):
     #        cont = cont + 1 
     return cont
 
+def f_reproduccion(pareja1, pareja2):
+    k = random.randint(0, len(pareja1.genes))
+    parte_izq = pareja1.genes[0:k]
+    parte_der = pareja2.genes[k:]
+    return parte_izq + parte_der
+
 def main():
     POBLACION = 100
     MAX_ITERACIONES = 5000
-    poblacion = Poblacion(POBLACION, generador, fitness)
+    poblacion = Poblacion(POBLACION, generador, fitness, f_reproduccion)
     for i in range(0,MAX_ITERACIONES):
         poblacion.imprimir()
         print("({})=======================================".format(i))
