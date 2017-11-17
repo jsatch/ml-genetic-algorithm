@@ -2,14 +2,16 @@ import random
 import string
 
 CADENA_A_BUSCAR = 'CAMILO'
-PORCENTAJE_MUTACION = 0.01
 
 class ADN:
-    def __init__(self, generador, fitness):
+    def __init__(self, generador, fitness, reproduccion, mutacion, porcentaje_mutacion):
         self.generador = generador
         self.fitness = fitness
         self.genes = ""
         self.fitness_result = 0
+        self.reproduccion = reproduccion
+        self.mutacion = mutacion
+        self.porcentaje_mutacion = porcentaje_mutacion
 
     def generar(self, longitud):
         self.genes = self.generador(longitud)
@@ -20,23 +22,24 @@ class ADN:
 
     def reproducir(self, pareja):
         #funcion reproduccion
-        k = random.randint(0, len(pareja.genes))
-        parte_izq = self.genes[0:k]
-        parte_der = pareja.genes[k:]
-        return parte_izq + parte_der
+        genes_hijo = self.reproduccion(self, pareja)
+        especie_hijo = ADN(self.generador, self.fitness, self.reproduccion, self.mutacion, self.porcentaje_mutacion)
+        especie_hijo.genes = genes_hijo
+        return especie_hijo
 
     def mutar(self):
-        if random.random() < PORCENTAJE_MUTACION:
-            lista = list(self.genes)
-            pos = random.randint(0, len(lista)-1)
-            lista[pos] = random.choice(string.ascii_uppercase)
-            self.genes = "".join(lista)
+        if random.random() < self.porcentaje_mutacion:
+            self.genes = self.mutacion(self.genes)
+            #lista = list(self.genes)
+            #pos = random.randint(0, len(lista)-1)
+            #lista[pos] = random.choice(string.ascii_uppercase)
+            #self.genes = "".join(lista)
     
     def __str__(self):
         return " ".join(self.genes)
 
 class Poblacion:
-    def __init__(self, cantidad, generador, fitness, f_reproductora):
+    def __init__(self, cantidad, generador, fitness, f_reproductora, f_mutadora, porcentaje_mutacion):
         self.cantidad = cantidad
         self.poblacion = []
         self.generador = generador
@@ -45,9 +48,11 @@ class Poblacion:
         self.fitness_total = 0
         self.lista_reproduccion = []
         self.f_reproductora = f_reproductora
+        self.f_mutadora = f_mutadora
+        self.porcentaje_mutacion = porcentaje_mutacion
 
         for i in range(1,cantidad):
-            especie = ADN(self.generador,self.fitness)
+            especie = ADN(self.generador,self.fitness, self.f_reproductora, self.f_mutadora, self.porcentaje_mutacion)
             especie.generar(len(CADENA_A_BUSCAR))
             self.poblacion.append(especie)
             fitness_especie = especie.calcular_fitness()
@@ -70,11 +75,9 @@ class Poblacion:
             pareja_a = self.lista_reproduccion[random.randint(0, len(self.lista_reproduccion)-1)]
             pareja_b = self.lista_reproduccion[random.randint(0, len(self.lista_reproduccion)-1)]
 
-            hijo = self.f_reproductora(pareja_a, pareja_b)
-            especie = ADN(self.generador,self.fitness)
-            especie.genes = hijo
-            self.poblacion.append(especie)
-            fitness_especie = especie.calcular_fitness()
+            hijo = pareja_a.reproducir(pareja_b)
+            self.poblacion.append(hijo)
+            fitness_especie = hijo.calcular_fitness()
             self.fitness_total = self.fitness_total + fitness_especie
             self.fitness_results.append(fitness_especie)
 
@@ -101,9 +104,6 @@ def fitness(cadena):
     for i in range(0,len(cadena)):
         if cadena[i] == CADENA_A_BUSCAR[i]:
             cont = cont + 1
-    #for c in cadena:
-    #    if c in CADENA_A_BUSCAR:
-    #        cont = cont + 1 
     return cont
 
 def f_reproduccion(pareja1, pareja2):
@@ -112,10 +112,17 @@ def f_reproduccion(pareja1, pareja2):
     parte_der = pareja2.genes[k:]
     return parte_izq + parte_der
 
+def f_mutacion(genes):
+    lista = list(genes)
+    pos = random.randint(0, len(lista)-1)
+    lista[pos] = random.choice(string.ascii_uppercase)
+    return  "".join(lista)
+
 def main():
     POBLACION = 100
     MAX_ITERACIONES = 5000
-    poblacion = Poblacion(POBLACION, generador, fitness, f_reproduccion)
+    PORCENTAJE_MUTACION = 0.01
+    poblacion = Poblacion(POBLACION, generador, fitness, f_reproduccion, f_mutacion, PORCENTAJE_MUTACION)
     for i in range(0,MAX_ITERACIONES):
         poblacion.imprimir()
         print("({})=======================================".format(i))
