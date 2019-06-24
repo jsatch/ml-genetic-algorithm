@@ -30,10 +30,6 @@ class ADN:
     def mutar(self):
         if random.random() < self.porcentaje_mutacion:
             self.genes = self.mutacion(self.genes)
-            #lista = list(self.genes)
-            #pos = random.randint(0, len(lista)-1)
-            #lista[pos] = random.choice(string.ascii_uppercase)
-            #self.genes = "".join(lista)
     
     def __str__(self):
         return " ".join(self.genes)
@@ -94,42 +90,23 @@ class Poblacion:
 
 
 def generador(max):
-    cadena = ""
-    for i in range(max):
-        cadena = cadena + random.choice(string.ascii_uppercase)
-    return cadena
+    pass 
 
 def fitness(cadena):
-    cont = 0
-    for i in range(0,len(cadena)):
-        if cadena[i] == CADENA_A_BUSCAR[i]:
-            cont = cont + 1
-    return cont
+    pass
 
 def f_reproduccion(pareja1, pareja2):
-    k = random.randint(0, len(pareja1.genes))
-    parte_izq = pareja1.genes[0:k]
-    parte_der = pareja2.genes[k:]
-    return parte_izq + parte_der
+    pass
 
 def f_mutacion(genes):
-    lista = list(genes)
-    pos = random.randint(0, len(lista)-1)
-    lista[pos] = random.choice(string.ascii_uppercase)
-    return  "".join(lista)
+    pass 
 
 def main():
     POBLACION = 100
     MAX_ITERACIONES = 5000
     PORCENTAJE_MUTACION = 0.01
     poblacion = Poblacion(POBLACION, generador, fitness, f_reproduccion, f_mutacion, PORCENTAJE_MUTACION)
-    for i in range(0,MAX_ITERACIONES):
-        poblacion.imprimir()
-        print("({})=======================================".format(i))
-        poblacion.seleccion()
-        poblacion.reproduccion()
-        print("Promedio Fitness: {}".format(poblacion.promedio_fitness()))
-        poblacion.mutar()
+ 
     
 
 if __name__ == '__main__':
